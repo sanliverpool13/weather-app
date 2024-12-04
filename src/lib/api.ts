@@ -1,6 +1,5 @@
-const API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
-const GEO_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
-const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
+import { GEO_BASE_URL, API_BASE_URL, API_KEY } from "@/constants";
+import { City } from "@/types";
 
 export const getCityCoordinates = async (city: string) => {
   console.log("api key", API_KEY);
@@ -31,10 +30,13 @@ export const getCityCoordinates = async (city: string) => {
   }
 };
 
-export const fetchCities = async (query: string) => {
+export const fetchMatchingCities = async (query: string) => {
+  console.log(`query ${query}`);
   const url = `${GEO_BASE_URL}?q=${query}&limit=5&appid=${API_KEY}`;
+
   try {
     const response = await fetch(url);
+    console.log("city response");
 
     if (!response.ok) {
       throw new Error(`Failed to fetch cities for query: ${query}`);
@@ -46,19 +48,23 @@ export const fetchCities = async (query: string) => {
       throw new Error("No matching cities found.");
     }
 
-    return data;
+    const cities: City[] = data.map((location: any) => ({
+      name: location.name,
+      state: location.state || null,
+      country: location.country || null,
+      lat: location.lat,
+      lon: location.lon,
+    }));
+    return cities;
   } catch (error) {
-    console.error(`Error in fetchCities: ${error}`);
-    throw new Error(`Unable to fetch cities: ${error}`);
+    console.error(`Error in fetchMatchingCities: ${error}`);
+    throw new Error(`Unable to fetch matching cities: ${error}`);
   }
 };
 
-export const fetchWeather = async (city: string) => {
+export const fetchWeather = async (city: string, lon: number, lat: number) => {
   try {
-    const { lat, lon } = await getCityCoordinates(city);
-    const cities = await fetchCities(city);
-    console.log("citis", cities);
-    console.log(`lat: ${lat} lon: ${lon}`);
+    // const { lat, lon } = await getCityCoordinates(city);
 
     const url = `${API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
 
