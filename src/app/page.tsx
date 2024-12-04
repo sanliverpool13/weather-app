@@ -3,6 +3,13 @@
 import React, { useState } from "react";
 import { fetchMatchingCities, fetchWeather } from "@/lib/api";
 import { City, WeatherData } from "@/types";
+import Tile from "@/components/Tile";
+import {
+  WiCloud,
+  WiHumidity,
+  WiStrongWind,
+  WiThermometer,
+} from "react-icons/wi";
 
 const HomePage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -141,23 +148,37 @@ const HomePage: React.FC = () => {
       </div>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       {weatherData && (
-        <div className="mt-6 bg-white shadow-lg rounded-lg p-4 max-w-md w-full">
-          <h2 className="text-lg font-bold text-gray-700 mb-2">
+        <div className="mt-6  p-4 max-w-md w-full">
+          <h2 className="text-lg text-center font-bold text-gray-700 mb-2">
             Weather in: {weatherData.name || city?.name}, {city?.state} (
             {city?.country})
           </h2>
-          <p className="text-gray-600">
-            Temperature: {Math.round(weatherData.main.temp)}°C
-          </p>
-          <p className="text-gray-600">
-            Weather: {weatherData.weather[0].description}
-          </p>
-          <p className="text-gray-600">
-            Humidity: {weatherData.main.humidity}%
-          </p>
-          <p className="text-gray-600">
-            Wind Speed: {weatherData.wind.speed} m/s
-          </p>
+          <div className="flex flex-wrap justify-center gap-6">
+            {/* Temperature Tile */}
+            <Tile
+              title="Temperature"
+              value={`${Math.round(weatherData.main.temp)}°C`}
+              icon={<WiThermometer />}
+            />
+            {/* Weather Tile */}
+            <Tile
+              title="Weather"
+              value={weatherData.weather[0].description}
+              icon={<WiCloud />}
+            />
+            {/* Humidity Tile */}
+            <Tile
+              title="Humidity"
+              value={`${weatherData.main.humidity}%`}
+              icon={<WiHumidity />}
+            />
+            {/* Wind Speed Tile */}
+            <Tile
+              title="Wind Speed"
+              value={`${weatherData.wind.speed} m/s`}
+              icon={<WiStrongWind />}
+            />
+          </div>
         </div>
       )}
     </div>
