@@ -44,10 +44,6 @@ export const fetchMatchingCities = async (query: string) => {
 
     const data = await response.json();
 
-    if (!data.length) {
-      throw new Error("No matching cities found.");
-    }
-
     const cities: City[] = data.map((location: any) => ({
       name: location.name,
       state: location.state || null,

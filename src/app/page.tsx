@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import { fetchMatchingCities, fetchWeather } from "@/lib/api";
-import { City } from "@/types";
+import { City, WeatherData } from "@/types";
 
 const HomePage: React.FC = () => {
   const [input, setInput] = useState("");
   const [city, setCity] = useState<City | null>();
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<
@@ -130,13 +130,14 @@ const HomePage: React.FC = () => {
             ))}
           </ul>
         )}
-        <button
+        {loading && <p className="mt-2 text-blue-500">Loading...</p>}
+        {/* <button
           className="w-full mt-4 bg-blue-500 text-white p-3 rounded-lg shadow hover:bg-blue-600 transition-colors"
           onClick={handleFetchWeather}
           disabled={loading}
         >
           {loading ? "Fetching..." : "Get Weather"}
-        </button>
+        </button> */}
       </div>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       {weatherData && (
