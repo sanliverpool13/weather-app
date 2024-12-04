@@ -1,4 +1,5 @@
 const API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+const GEO_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 
 export const getCityCoordinates = async (city: string) => {
@@ -30,9 +31,33 @@ export const getCityCoordinates = async (city: string) => {
   }
 };
 
+export const fetchCities = async (query: string) => {
+  const url = `${GEO_BASE_URL}?q=${query}&limit=5&appid=${API_KEY}`;
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cities for query: ${query}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.length) {
+      throw new Error("No matching cities found.");
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Error in fetchCities: ${error}`);
+    throw new Error(`Unable to fetch cities: ${error}`);
+  }
+};
+
 export const fetchWeather = async (city: string) => {
   try {
     const { lat, lon } = await getCityCoordinates(city);
+    const cities = await fetchCities(city);
+    console.log("citis", cities);
     console.log(`lat: ${lat} lon: ${lon}`);
 
     const url = `${API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
