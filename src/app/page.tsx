@@ -10,6 +10,7 @@ import {
   WiStrongWind,
   WiThermometer,
 } from "react-icons/wi";
+import { Toaster, toast } from "react-hot-toast";
 
 const HomePage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -47,14 +48,13 @@ const HomePage: React.FC = () => {
   };
 
   const handleFetchWeather = async (cityInput?: City | null) => {
-    console.log("city retrieved state", cityInput);
     const cityInputName = cityInput ? cityInput.name : null;
     const cityInputLat = cityInput ? cityInput.lat : null;
     const cityInputLon = cityInput ? cityInput.lon : null;
-    console.log(cityInputName);
 
     if (!cityInputName || !cityInputName.trim()) {
       setError("Please enter a city name.");
+
       return;
     }
 
@@ -75,9 +75,12 @@ const HomePage: React.FC = () => {
       );
       setWeatherData(data);
     } catch (err) {
-      setError(
+      toast.error(
         err instanceof Error ? err.message : "An unexpected error occurred."
       );
+      // setError(
+      //   err instanceof Error ? err.message : "An unexpected error occurred."
+      // );
     } finally {
       setLoading(false);
     }
@@ -104,7 +107,6 @@ const HomePage: React.FC = () => {
     lon: number;
   }) => {
     setInput(""); // Set the input to the selected city
-    console.log("city from suggestions clicked", city);
     setCity(city);
     handleFetchWeather(city);
     setSuggestions([]); // Clear suggestions after selection
@@ -112,6 +114,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+      {/* Add Toaster */}
+      <Toaster position="top-center" reverseOrder={false} />
       <h1 className="text-2xl font-bold mb-4 text-gray-800">Weather App</h1>
       <div className="w-80 max-w-md">
         <input
@@ -138,17 +142,10 @@ const HomePage: React.FC = () => {
           </ul>
         )}
         {loading && <p className="mt-2 text-blue-500">Loading...</p>}
-        {/* <button
-          className="w-full mt-4 bg-blue-500 text-white p-3 rounded-lg shadow hover:bg-blue-600 transition-colors"
-          onClick={handleFetchWeather}
-          disabled={loading}
-        >
-          {loading ? "Fetching..." : "Get Weather"}
-        </button> */}
       </div>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       {weatherData && (
-        <div className="mt-6  p-4 max-w-md w-full">
+        <div className="mt-6 p-4 max-w-md w-full">
           <h2 className="text-lg text-center font-bold text-gray-700 mb-2">
             Weather in: {weatherData.name || city?.name}, {city?.state} (
             {city?.country})
@@ -165,6 +162,13 @@ const HomePage: React.FC = () => {
               title="Weather"
               value={weatherData.weather[0].description}
               icon={<WiCloud />}
+            />
+            <Tile
+              icon={
+                <i className="fas fa-temperature-low text-gray-500 text-2xl"></i>
+              }
+              title="Feels Like"
+              value={`${Math.round(weatherData.main.feels_like)}°C`}
             />
             {/* Humidity Tile */}
             <Tile

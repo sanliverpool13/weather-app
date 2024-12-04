@@ -2,13 +2,10 @@ import { GEO_BASE_URL, API_BASE_URL, API_KEY } from "@/constants";
 import { City } from "@/types";
 
 export const getCityCoordinates = async (city: string) => {
-  console.log("api key", API_KEY);
-
   const url = `${API_BASE_URL}?q=${city.toLowerCase()}&appid=${API_KEY}`;
 
   try {
     const response = await fetch(url);
-    console.log("response coord", response);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch coordinates for city: ${city}`);
@@ -31,12 +28,10 @@ export const getCityCoordinates = async (city: string) => {
 };
 
 export const fetchMatchingCities = async (query: string) => {
-  console.log(`query ${query}`);
   const url = `${GEO_BASE_URL}?q=${query}&limit=5&appid=${API_KEY}`;
 
   try {
     const response = await fetch(url);
-    console.log("city response");
 
     if (!response.ok) {
       throw new Error(`Failed to fetch cities for query: ${query}`);
@@ -60,20 +55,15 @@ export const fetchMatchingCities = async (query: string) => {
 
 export const fetchWeather = async (city: string, lon: number, lat: number) => {
   try {
-    // const { lat, lon } = await getCityCoordinates(city);
-
     const url = `${API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
 
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to fetch weather data for city (Status): ${response.status}`
-      );
+      throw new Error(`Failed to fetch weather data for city: ${city}`);
     }
 
     const data = await response.json();
-    console.log("data", data);
     return data;
   } catch (error) {
     console.error(`Error in fetchWeather: ${error}`);
