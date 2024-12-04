@@ -8,7 +8,7 @@ interface TileProps {
 
 const Tile: React.FC<TileProps> = ({ title, value, icon }) => {
   return (
-    <div className="flex flex-col items-center justify-between bg-gray-100 rounded-lg shadow-md p-4 h-40 w-40">
+    <div className="flex flex-col items-center justify-between bg-white rounded-lg shadow-md p-4 h-40 w-40">
       <div className="flex-1 flex items-center justify-center text-center">
         <div>
           <p className="text-sm font-semibold text-gray-600">{title}</p>
