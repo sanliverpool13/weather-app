@@ -1,11 +1,14 @@
 const API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
-const API_KEY = process.env.WEATHER_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 
 export const getCityCoordinates = async (city: string) => {
-  const url = `${API_BASE_URL}?q=${city}&appid=${API_KEY}`;
+  console.log("api key", API_KEY);
+
+  const url = `${API_BASE_URL}?q=${city.toLowerCase()}&appid=${API_KEY}`;
 
   try {
     const response = await fetch(url);
+    console.log("response coord", response);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch coordinates for city: ${city}`);
@@ -13,7 +16,7 @@ export const getCityCoordinates = async (city: string) => {
 
     const data = await response.json();
 
-    if (data.coord) {
+    if (!data.coord) {
       throw new Error(`No coordinates found for city: ${city}`);
     }
 
@@ -30,8 +33,9 @@ export const getCityCoordinates = async (city: string) => {
 export const fetchWeather = async (city: string) => {
   try {
     const { lat, lon } = await getCityCoordinates(city);
+    console.log(`lat: ${lat} lon: ${lon}`);
 
-    const url = `${API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    const url = `${API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
 
     const response = await fetch(url);
 
@@ -41,7 +45,9 @@ export const fetchWeather = async (city: string) => {
       );
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log("data", data);
+    return data;
   } catch (error) {
     console.error(`Error in fetchWeather: ${error}`);
     throw new Error(`Unable to fetch weather data: ${error}`);
